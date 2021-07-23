@@ -7,3 +7,5 @@ ProjectSettings/
 Unity_Galaga.sln
 UserSettings/
 Assembly-CSharp.csproj
+*.meta
+.vscode
