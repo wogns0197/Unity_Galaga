@@ -1,0 +1,9 @@
+Gallerg.sln
+Library/
+Logs/
+obj/
+Packages/
+ProjectSettings/
+Unity_Galaga.sln
+UserSettings/
+Assembly-CSharp.csproj
