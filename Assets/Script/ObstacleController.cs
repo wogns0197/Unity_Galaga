@@ -11,6 +11,10 @@ public class ObstacleController : MonoBehaviour
 
   void Update()
   {
-
+    if (Mathf.Abs(transform.position.x) > 5f ||
+      transform.position.y > 10f || transform.position.y < -8f)
+    {
+      Destroy(gameObject);
+    }
   }
 }

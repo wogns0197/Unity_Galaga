@@ -1,18 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-
 public class PlaneController : MonoBehaviour
 {
+  public static PlaneController PlaneInstance; // singleton myself
+  private GunType ammo;
   private float moveSpeed;
-  public GunType ammo;
   private int gunLevel, gunNum;
-  private const float DelayTime_Normal = .1f, DelayTime_Low = .05f, DelayTime_Magic = .5f, DelayTime_Ulti = 2f;
+  private const float DELAYTIME_NORMAL = .1f, DELAYTIME_LOW = .05f, DELAYTIME_MAGIC = .5f, DELAYTIME_ULTI = 2f;
 
   [SerializeField]
   private GameObject[] bulletPrefab;
+  private Collider2D[] detectionObject;
   private AmmoGage GageController;
+  private void Awake()
+  {
+    PlaneInstance = this;
+  }
   private void Start()
   {
     moveSpeed = .08f;
@@ -26,6 +30,10 @@ public class PlaneController : MonoBehaviour
 
     Move();
 
+    // auto obstacle detection
+    detectionObject = Physics2D.OverlapBoxAll(this.transform.position, new Vector2(4f, 20f), 0);
+
+
     //test key
     if (Input.GetKeyDown(KeyCode.F))
     {
@@ -34,6 +42,7 @@ public class PlaneController : MonoBehaviour
       {
         ammo++;
       }
+
     }
     if (Input.GetKeyDown(KeyCode.G))
     {
@@ -50,9 +59,18 @@ public class PlaneController : MonoBehaviour
   }
   private void Move()
   {
+    Vector3 pos = transform.position;
     float axisX = Input.GetAxis("Horizontal");
     float axisY = Input.GetAxis("Vertical");
 
+    if (Mathf.Abs(pos.x) > 3.9f)
+    {
+      transform.position = new Vector3(pos.x < 0 ? -3.9f : 3.9f, pos.y, pos.z);
+    }
+    if (Mathf.Abs(pos.y) > 4.65)
+    {
+      transform.position = new Vector3(pos.x, pos.y < 0 ? -4.65f : 4.65f, pos.z);
+    }
     if (axisX != 0)
     {
       // transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
@@ -74,7 +92,7 @@ public class PlaneController : MonoBehaviour
     switch ((int)ammoSelect)
     {
       case 0:
-        if (GageController.Get_Normal() > DelayTime_Normal)
+        if (GageController.Get_Normal() > DELAYTIME_NORMAL)
         {
           // Instantiate(bulletPrefab[0], this.transform.position, Quaternion.Euler(0, 0, 90));
           InstantiateByLevel(bulletPrefab[0]);
@@ -82,7 +100,7 @@ public class PlaneController : MonoBehaviour
         }
         break;
       case 1:
-        if (GageController.Get_Low() > DelayTime_Low)
+        if (GageController.Get_Low() > DELAYTIME_LOW)
         {
           // Instantiate(bulletPrefab[1], this.transform.position, Quaternion.Euler(0, 0, 90));
           InstantiateByLevel(bulletPrefab[1]);
@@ -90,14 +108,14 @@ public class PlaneController : MonoBehaviour
         }
         break;
       case 2:
-        if (GageController.Get_Magic() > DelayTime_Magic)
+        if (GageController.Get_Magic() > DELAYTIME_MAGIC)
         {
           Instantiate(bulletPrefab[2], this.transform.position, Quaternion.Euler(0, 0, 90));
           GageController.Set_Magic(0);
         }
         break;
       case 3:
-        if (GageController.Get_Ulti() > DelayTime_Ulti)
+        if (GageController.Get_Ulti() > DELAYTIME_ULTI)
         {
           Instantiate(bulletPrefab[3], this.transform.position, Quaternion.Euler(0, 0, 90));
           GageController.Set_Ulti(0);
@@ -133,7 +151,15 @@ public class PlaneController : MonoBehaviour
       default:
         break;
     }
-
   }
 
+  public GunType GetCurrentAmmo()
+  {
+    return ammo;
+  }
+
+  public Collider2D[] GetDetectionColl()
+  {
+    return detectionObject;
+  }
 }

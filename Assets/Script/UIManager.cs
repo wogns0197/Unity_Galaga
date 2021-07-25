@@ -35,7 +35,6 @@ public class UIManager : MonoBehaviour
     }
     Cur_Ammo_Image.GetComponent<Image>().sprite = spriteResources[curAmmo > 2 ? curAmmo = 0 : ++curAmmo];
     Cur_Ammo_Image.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-    Debug.Log(curAmmo);
   }
 
 }
